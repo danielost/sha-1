@@ -118,5 +118,5 @@ func breakMessageIntoChunks(message *[]byte, chunkSize int) [][]byte {
 }
 
 func leftRotate(u uint32, n int) uint32 {
-	return ((u << n) | (u >> (32 - n)))
+	return (u << n) | (u >> (32 - n))
 }
