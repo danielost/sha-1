@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// BenchmarkCustomSha1_2000 measures the performance of the Sum function for a 2000-byte input.
 func BenchmarkCustomSha1_2000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		randInput := randSeq(2000)
@@ -12,6 +13,7 @@ func BenchmarkCustomSha1_2000(b *testing.B) {
 	}
 }
 
+// BenchmarkBuiltinSha1_2000 measures the performance of the built-in crypto/sha1 package for a 2000-byte input.
 func BenchmarkBuiltinSha1_2000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		randInput := randSeq(2000)
@@ -19,6 +21,7 @@ func BenchmarkBuiltinSha1_2000(b *testing.B) {
 	}
 }
 
+// BenchmarkCustomSha1_20000 measures the performance of the Sum function for a 20000-byte input.
 func BenchmarkCustomSha1_20000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		randInput := randSeq(20000)
@@ -26,6 +29,7 @@ func BenchmarkCustomSha1_20000(b *testing.B) {
 	}
 }
 
+// BenchmarkBuiltinSha1_20000 measures the performance of the built-in crypto/sha1 package for a 20000-byte input.
 func BenchmarkBuiltinSha1_20000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		randInput := randSeq(20000)
