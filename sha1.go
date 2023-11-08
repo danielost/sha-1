@@ -1,3 +1,7 @@
+// Package sha1 implements the SHA-1 hash algorithm.
+//
+// The implementation is based on the pseudo code from the Wikipedia article:
+// https://en.wikipedia.org/wiki/SHA-1
 package sha1
 
 import (
@@ -5,6 +9,7 @@ import (
 	"math/big"
 )
 
+// Sum calculates the SHA-1 hash of the given message.
 func Sum(message []byte) []byte {
 	// Initialize variables:
 	var (
@@ -15,14 +20,19 @@ func Sum(message []byte) []byte {
 		h4 uint32 = 0xC3D2E1F0
 	)
 
-	// Pre-processing:
+	// Pad the message to be a multiple of 512 bits:
 	addPadding(&message)
 
 	// Process the message in successive 512-bit chunks:
 	chunks := breakMessageIntoChunks(&message, 512)
+
 	for _, chunk := range chunks {
+		// Break each chunk into 32-bit words:
 		wordsByte := breakMessageIntoChunks(&chunk, 32)
+		// Allocate an array to hold 80 uint32 values:
 		wordsUint := make([]uint32, 80)
+
+		// Convert each byte to an uint32:
 		for i, b := range wordsByte {
 			wordsUint[i] = binary.BigEndian.Uint32(b)
 		}
@@ -56,6 +66,7 @@ func Sum(message []byte) []byte {
 				k = 0xCA62C1D6
 			}
 
+			// Calculate the cureent intermediate value:
 			temp := leftRotate(a, 5) + f + e + k + wordsUint[i]
 			e = d
 			d = c
@@ -96,27 +107,40 @@ func Sum(message []byte) []byte {
 	return bytes
 }
 
+// addPadding pads the message to ensure its length is a multiple of 512 bits.
 func addPadding(message *[]byte) {
 	messageLength := uint64(len(*message) * 8)
 	*message = append(*message, 0x80)
+
+	// Pad the message with 0x00 bytes until the length is a multiple of 512 bits.
+	// Leaves space for the message length.
 	for len(*message)%64 != 56 {
 		*message = append(*message, 0x00)
 	}
+
+	// Append the message length:
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, messageLength)
 	*message = append(*message, b...)
 }
 
+// breakMessageIntoChunks breaks the message into N-bit chunks.
 func breakMessageIntoChunks(message *[]byte, chunkSize int) [][]byte {
+	// Calculate the number of chunks to split the message into:
 	chunkSize = chunkSize / 8
 	numberOfChunks := len(*message) / chunkSize
+
+	// Create an empty slice to store the chunks.
 	chunks := make([][]byte, numberOfChunks)
+
+	// Split the message into chunks.
 	for i := 0; i < numberOfChunks; i++ {
 		chunks[i] = (*message)[i*chunkSize : i*chunkSize+chunkSize]
 	}
 	return chunks
 }
 
+// leftRotate rotates the 32-bit unsigned integer u by n bits to the left.
 func leftRotate(u uint32, n int) uint32 {
 	return (u << n) | (u >> (32 - n))
 }
